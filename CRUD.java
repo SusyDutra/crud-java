@@ -15,12 +15,29 @@ public class CRUD {
 			System.out.println("A conexão com o banco de dados foi mal sucedida.");
 			System.exit(0);
 		}
+    	
+    	Scanner scanner = new Scanner(System.in);
  
         System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
+        int escolha = scanner.nextInt();
+        
+        switch (escolha) {
+	        case 1:
+	            System.out.println("\nDigite o nome que quer inserir: ");
+	            String novoAluno = scanner.next();
+	            createAluno(conn, novoAluno);
+	            break;
+	        case 2:
+	            System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
+	            float novaNota = scanner.nextFloat();
+	            createNota(conn, novaNota);
+	            break;
+	        default:
+	            System.out.println("\nOpção inválida\n");
+	            break;
+        }     
 
-        createAluno(conn, "Aluno");
-     
-        createNota(conn, (float) 10.0);
+        scanner.close();
     }
 
     private static Connection setConnection () throws SQLException {
