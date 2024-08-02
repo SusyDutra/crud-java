@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class CRUD {
 	
@@ -15,21 +16,28 @@ public class CRUD {
 			System.exit(0);
 		}
     	
-    	System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
-    	
-    	String sql = "INSERT INTO Aluno (id_aluno, nome) VALUES (?, ?)";
+    	Scanner scanner = new Scanner(System.in);
+ 
+        System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
+        int escolha = scanner.nextInt();
+        
+        switch (escolha) {
+	        case 1:
+	            System.out.println("\nDigite o nome que quer inserir: ");
+	            String novoAluno = scanner.next();
+	            createAluno(conn, novoAluno);
+	            break;
+	        case 2:
+	            System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
+	            float novaNota = scanner.nextFloat();
+	            createNota(conn, novaNota);
+	            break;
+	        default:
+	            System.out.println("\nOpção inválida\n");
+	            break;
+        }     
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, 2);
-            pstmt.setString(2, "Aluno");
-
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println("Um novo aluno foi inserido com sucesso!");
-            }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        }
+        scanner.close();
     }
 
     private static Connection setConnection () throws SQLException {
@@ -53,4 +61,35 @@ public class CRUD {
 
         return conn;
     }
+    
+    public static void createAluno(Connection conn, String nome) {
+    	String sql = "INSERT INTO aluno (nome) VALUES (?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nome);
+
+            int rowsInserted = pstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Um novo aluno foi inserido com sucesso!");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+
+    public static void createNota(Connection conn, float nota) {
+    	String sql = "INSERT INTO nota (nota) VALUES (?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setFloat(1, nota);
+
+            int rowsInserted = pstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Uma nova nota foi inserida com sucesso!");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+
 }
