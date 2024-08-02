@@ -17,15 +17,14 @@ public class CRUD {
     	
     	System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
     	
-    	String sql = "INSERT INTO Aluno (id_aluno, nome) VALUES (?, ?)";
+    	String sql = "INSERT INTO nota (nota) VALUES (?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, 2);
-            pstmt.setString(2, "Aluno");
+            pstmt.setFloat(1, (float) 9.8);
 
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
-                System.out.println("Um novo aluno foi inserido com sucesso!");
+                System.out.println("Uma nova nota foi inserido com sucesso!");
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
