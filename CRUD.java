@@ -64,6 +64,10 @@ public class CRUD {
     
     public static void createAluno(Connection conn, String nome) {
     	String sql = "INSERT INTO aluno (nome) VALUES (?)";
+    	
+    	if(nome.length() > 15) {
+            System.out.println("O tamanho máximo para nomes é 15 caracteres.\n");
+    	}
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nome);
