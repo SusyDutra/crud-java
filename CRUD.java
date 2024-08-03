@@ -25,37 +25,43 @@ public class CRUD {
         System.out.println("A operação:\n1 - CREATE\n2 - READ\n");
         int escolhaOperacao = scanner.nextInt();
         
-        switch (escolhaOperacao) {
+        switch (escolhaTabela) {
 	        case 1:
-	        	switch(escolhaTabela) {
+	        	switch(escolhaOperacao) {
 	        		case 1:
 			        	System.out.println("\nDigite o nome que quer inserir: ");
 			            String novoAluno = scanner.next();
 			            createAluno(conn, novoAluno);
 			            break;
 	        		case 2:
-	        			System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
-			            float novaNota = scanner.nextFloat();
-			            createNota(conn, novaNota);
-			            break;
+	        			System.out.println("\nDigite o id do aluno que quer ler: ");
+	        			int idAluno = scanner.nextInt();
+	        			readAluno(conn, idAluno);
+	        			break;
+	        		default:
+	    	            System.out.println("\nOpção inválida\n");
+	    	            break;
 	        	}
-	        	break;
+        	break;
 	            
 	        case 2:
-	        	switch(escolhaTabela) {
+	        	switch(escolhaOperacao) {
 	        		case 1:
-			        	System.out.println("\nDigite o id do aluno que quer ler: ");
-			            int idAluno = scanner.nextInt();
-			            readAluno(conn, idAluno);
-			            break;
+	        			System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
+	        			float novaNota = scanner.nextFloat();
+	        			createNota(conn, novaNota);
+	        			break;
 	        		case 2:
 	        			System.out.println("\nDigite o id da nota que quer ler: ");
 	        			int idNota = scanner.nextInt();
-			            readNota(conn, idNota);
-			            break;
+	        			readNota(conn, idNota);
+	        			break;
+	        		default:
+	    	            System.out.println("\nOpção inválida\n");
+	    	            break;
 	        	}	
-	        	break;
-	        	
+        	break;
+ 
 	        default:
 	            System.out.println("\nOpção inválida\n");
 	            break;
