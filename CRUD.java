@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -19,19 +20,42 @@ public class CRUD {
     	Scanner scanner = new Scanner(System.in);
  
         System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
-        int escolha = scanner.nextInt();
+        int escolhaTabela = scanner.nextInt();
         
-        switch (escolha) {
+        System.out.println("A operação:\n1 - CREATE\n2 - READ\n");
+        int escolhaOperacao = scanner.nextInt();
+        
+        switch (escolhaOperacao) {
 	        case 1:
-	            System.out.println("\nDigite o nome que quer inserir: ");
-	            String novoAluno = scanner.next();
-	            createAluno(conn, novoAluno);
-	            break;
+	        	switch(escolhaTabela) {
+	        		case 1:
+			        	System.out.println("\nDigite o nome que quer inserir: ");
+			            String novoAluno = scanner.next();
+			            createAluno(conn, novoAluno);
+			            break;
+	        		case 2:
+	        			System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
+			            float novaNota = scanner.nextFloat();
+			            createNota(conn, novaNota);
+			            break;
+	        	}
+	        	break;
+	            
 	        case 2:
-	            System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
-	            float novaNota = scanner.nextFloat();
-	            createNota(conn, novaNota);
-	            break;
+	        	switch(escolhaTabela) {
+	        		case 1:
+			        	System.out.println("\nDigite o id do aluno que quer ler: ");
+			            int idAluno = scanner.nextInt();
+			            readAluno(conn, idAluno);
+			            break;
+	        		case 2:
+	        			System.out.println("\nDigite o id da nota que quer ler: ");
+	        			int idNota = scanner.nextInt();
+			            readNota(conn, idNota);
+			            break;
+	        	}	
+	        	break;
+	        	
 	        default:
 	            System.out.println("\nOpção inválida\n");
 	            break;
@@ -91,5 +115,42 @@ public class CRUD {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
+
+    private static void readAluno(Connection conn, int id) {
+        String sql = "SELECT nome FROM aluno WHERE id_aluno = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                System.out.printf("ID: %d, nome: %s%n\n", id, nome);
+            } else {
+                System.out.println("Aluno não encontrado.\n");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+ 
+    private static void readNota(Connection conn, int id) {
+        String sql = "SELECT nota FROM nota WHERE id_nota = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                float nota = rs.getFloat("nota");
+                System.out.printf("ID: %d, nota: %.2f%n\n", id, nota);
+            } else {
+                System.out.println("Nota não encontrada.\n");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+
 
 }
