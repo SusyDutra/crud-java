@@ -9,11 +9,6 @@ public class Aluno {
 	private int id;
 	private String nome;
 	public Scanner scanner;
-
-	//public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	//}
 	
 	public Aluno(Scanner scanner) {
 		this.scanner = scanner;
@@ -38,11 +33,11 @@ public class Aluno {
 		
     	String sql = "INSERT INTO aluno (nome) VALUES (?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, this.nome);
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setString(1, this.nome);
 
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted > 0) {
+            int inserido = comando.executeUpdate();
+            if (inserido == 1) {
                 System.out.println("Um novo aluno foi inserido com sucesso!");
             }
         } catch (SQLException e) {
@@ -55,12 +50,12 @@ public class Aluno {
 		
         String sql = "SELECT nome FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            ResultSet resultado = comando.executeQuery();
 
-            if (rs.next()) {
-            	this.nome = rs.getString("nome");
+            if (resultado.next()) {
+            	this.nome = resultado.getString("nome");
                 System.out.printf("ID: %d, nome: %s%n\n", this.id, this.nome);
             } else {
                 System.out.println("Aluno não encontrado.\n");
@@ -76,10 +71,10 @@ public class Aluno {
 		
         String sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	pstmt.setString(1, this.nome);
-            pstmt.setInt(2, this.id);
-            int atualizou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setString(1, this.nome);
+        	comando.setInt(2, this.id);
+            int atualizou = comando.executeUpdate();
 
             if (atualizou == 1) {
                 System.out.printf("O aluno de id %d agora tem nome: %s%n\n", this.id, this.nome);
@@ -96,9 +91,9 @@ public class Aluno {
 		
     	String sql = "DELETE FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            int deletou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
                 System.out.printf("O aluno de id %d foi deletado\n", this.id);

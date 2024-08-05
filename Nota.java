@@ -9,11 +9,6 @@ public class Nota {
 	private int id;
 	private float nota;
 	public Scanner scanner;
-
-	//public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	//}
 	
 	public Nota(Scanner scanner) {
 		this.scanner = scanner;
@@ -38,11 +33,11 @@ public class Nota {
 
     	String sql = "INSERT INTO nota (nota) VALUES (?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setFloat(1, this.nota);
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setFloat(1, this.nota);
 
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted > 0) {
+            int inserido = comando.executeUpdate();
+            if (inserido == 1) {
                 System.out.println("Uma nova nota foi inserida com sucesso!");
             }
         } catch (SQLException e) {
@@ -57,12 +52,12 @@ public class Nota {
 
         String sql = "SELECT nota FROM nota WHERE id_nota = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            ResultSet inserido = comando.executeQuery();
 
-            if (rs.next()) {
-            	this.nota = rs.getFloat("nota");
+            if (inserido.next()) {
+            	this.nota = inserido.getFloat("nota");
                 System.out.printf("ID: %d, nota: %.2f%n\n", this.id, this.nota);
             } else {
                 System.out.println("Nota não encontrada.\n");
@@ -78,10 +73,10 @@ public class Nota {
 		
         String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	pstmt.setFloat(1, this.nota);
-            pstmt.setInt(2, this.id);
-            int atualizou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setFloat(1, this.nota);
+        	comando.setInt(2, this.id);
+            int atualizou = comando.executeUpdate();
 
             if (atualizou == 1) {
                 System.out.printf("A nota de id %d agora vale: %f%n\n", this.id, this.nota);
@@ -98,9 +93,9 @@ public class Nota {
 		
     	String sql = "DELETE FROM nota WHERE id_nota = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            int deletou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
                 System.out.printf("O aluno de id %d foi deletado\n", this.id);

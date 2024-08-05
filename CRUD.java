@@ -11,7 +11,7 @@ public class CRUD {
 
     	Connection conn = null;
     	try {
-			conn = setConnection();
+			conn = conexao();
 		} catch (Exception e) {
 			System.out.println("A conexão com o banco de dados foi mal sucedida.");
 			System.exit(0);
@@ -22,7 +22,7 @@ public class CRUD {
         System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
         int escolhaTabela = scanner.nextInt();
         
-        System.out.println("A operação:\n1 - CREATE\n2 - READ\n3 - UPDATE\n4 - DELETE\n");
+        System.out.println("Agora, a operação:\n1 - CREATE\n2 - READ\n3 - UPDATE\n4 - DELETE\n");
         int escolhaOperacao = scanner.nextInt();
         
         switch (escolhaTabela) {
@@ -77,7 +77,7 @@ public class CRUD {
         scanner.close();
     }
 
-    private static Connection setConnection () throws SQLException {
+    private static Connection conexao () throws SQLException {
     	Connection conn = null;
  
         try {
