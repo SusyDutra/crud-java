@@ -22,12 +22,12 @@ public class CRUD {
         System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
         int escolhaTabela = scanner.nextInt();
         
-        System.out.println("A operação:\n1 - CREATE\n2 - READ\n");
+        System.out.println("A operação:\n1 - CREATE\n2 - READ\n3 - UPDATE\n4 - DELETE\n");
         int escolhaOperacao = scanner.nextInt();
         
         switch (escolhaTabela) {
 	        case 1:
-	        	Aluno aluno = new Aluno(-1, "");
+	        	Aluno aluno = new Aluno(scanner);
 
 	        	switch(escolhaOperacao) {
 	        		case 1:
@@ -36,6 +36,9 @@ public class CRUD {
 	        		case 2:
 	        			aluno.readAluno(conn);
 	        			break;
+	        		case 3:
+	        			aluno.updateAluno(conn);
+	        			break;
 	        		default:
 	    	            System.out.println("\nOpção inválida\n");
 	    	            break;
@@ -43,7 +46,7 @@ public class CRUD {
         	break;
 	            
 	        case 2:
-	        	Nota nota = new Nota(-1, -1);
+	        	Nota nota = new Nota(scanner);
 	        	
 	        	switch(escolhaOperacao) {
 	        		case 1:
@@ -51,6 +54,9 @@ public class CRUD {
 	        			break;
 	        		case 2:
 	        			nota.readNota(conn);
+	        			break;
+	        		case 3:
+	        			nota.updateNota(conn);
 	        			break;
 	        		default:
 	    	            System.out.println("\nOpção inválida\n");

@@ -8,39 +8,33 @@ public class Aluno {
 	
 	private int id;
 	private String nome;
+	public Scanner scanner;
 
 	//public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 	//}
 	
-	public Aluno(int id, String nome) {
-		this.id = id;
-		this.nome = nome;
+	public Aluno(Scanner scanner) {
+		this.scanner = scanner;
 	}
 	
-	private void recebeNomeInput() {
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("\nDigite o nome que quer inserir: ");
-        String novoAluno = scanner.next();
+	private void recebeNomeInput(String complemento) {
+		System.out.println("\nDigite o nome " + complemento);
+        String novoAluno = scanner.nextLine();
         this.nome = novoAluno;
-        
-        scanner.close();
 	}
 	
-	private void recebeIdInput() {
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("\nDigite o id do aluno que quer ler: ");
+	private void recebeIdInput(String complemento) {
+		System.out.println("\nDigite o id do aluno " + complemento);
 		int idAluno = scanner.nextInt();
         this.id = idAluno;
         
-        scanner.close();
+        scanner.nextLine(); // para ler o \n deixado
 	}
 	
 	public void createAluno(Connection conn) {
-		recebeNomeInput();
+		recebeNomeInput("que quer inserir: ");
 		
     	String sql = "INSERT INTO aluno (nome) VALUES (?)";
 
@@ -57,7 +51,7 @@ public class Aluno {
     }
 	
 	public void readAluno(Connection conn) {
-		recebeIdInput();
+		recebeIdInput("que quer ler: ");
 		
         String sql = "SELECT nome FROM aluno WHERE id_aluno = ?";
 
@@ -66,8 +60,29 @@ public class Aluno {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                String nome = rs.getString("nome");
-                System.out.printf("ID: %d, nome: %s%n\n", id, nome);
+            	this.nome = rs.getString("nome");
+                System.out.printf("ID: %d, nome: %s%n\n", this.id, this.nome);
+            } else {
+                System.out.println("Aluno não encontrado.\n");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+	
+	public void updateAluno(Connection conn) {
+		recebeIdInput("que quer atualizar o nome: ");
+		recebeNomeInput("atualizado: ");
+		
+        String sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        	pstmt.setString(1, this.nome);
+            pstmt.setInt(2, this.id);
+            int atualizou = pstmt.executeUpdate();
+
+            if (atualizou == 1) {
+                System.out.printf("O aluno de id %d agora tem nome: %s%n\n", this.id, this.nome);
             } else {
                 System.out.println("Aluno não encontrado.\n");
             }
