@@ -8,39 +8,33 @@ public class Nota {
 
 	private int id;
 	private float nota;
+	public Scanner scanner;
 
 	//public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 	//}
 	
-	public Nota(int id, float nota) {
-		this.id = id;
-		this.nota = nota;
+	public Nota(Scanner scanner) {
+		this.scanner = scanner;
 	}
 	
-	public void recebeNotaInput() {
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("\nDigite a nota que quer inserir (separe as casas decimais com uma vírgula): ");
+	public void recebeNotaInput(String complemento) {
+		System.out.println("\nDigite a nota " + complemento + " (separe as casas decimais com uma vírgula): ");
 		float novaNota = scanner.nextFloat();
         this.nota = novaNota;
-        
-        scanner.close();
 	}
 	
-	private void recebeIdInput() {
-		Scanner scanner = new Scanner(System.in);
-
-		System.out.println("\nDigite o id da nota que quer ler: ");
-		int idNota = scanner.nextInt();
-        this.id = idNota;
+	private void recebeIdInput(String complemento) {
+		System.out.println("\nDigite o id da nota " + complemento);
+		int idAluno = scanner.nextInt();
+        this.id = idAluno;
         
-        scanner.close();
+        scanner.nextLine(); // para ler o \n deixado
 	}
 	
 	public void createNota(Connection conn) {
-		recebeNotaInput();
+		recebeNotaInput("que que adicionar");
 
     	String sql = "INSERT INTO nota (nota) VALUES (?)";
 
@@ -59,7 +53,7 @@ public class Nota {
     
  
     public void readNota(Connection conn) {
-    	recebeIdInput();
+    	recebeIdInput("que quer ver");
 
         String sql = "SELECT nota FROM nota WHERE id_nota = ?";
 
@@ -68,8 +62,29 @@ public class Nota {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                float nota = rs.getFloat("nota");
-                System.out.printf("ID: %d, nota: %.2f%n\n", id, nota);
+            	this.nota = rs.getFloat("nota");
+                System.out.printf("ID: %d, nota: %.2f%n\n", this.id, this.nota);
+            } else {
+                System.out.println("Nota não encontrada.\n");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+    
+    public void updateNota(Connection conn) {
+		recebeIdInput("que quer atualizar: ");
+		recebeNotaInput("atualizada");
+		
+        String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        	pstmt.setFloat(1, this.nota);
+            pstmt.setInt(2, this.id);
+            int atualizou = pstmt.executeUpdate();
+
+            if (atualizou == 1) {
+                System.out.printf("A nota de id %d agora vale: %f%n\n", this.id, this.nota);
             } else {
                 System.out.println("Nota não encontrada.\n");
             }
