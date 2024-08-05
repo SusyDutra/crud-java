@@ -90,4 +90,23 @@ public class Aluno {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
+	
+	public void deleteAluno(Connection conn) {
+		recebeIdInput("que quer deletar: ");
+		
+    	String sql = "DELETE FROM aluno WHERE id_aluno = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, this.id);
+            int deletou = pstmt.executeUpdate();
+
+            if (deletou == 1) {
+                System.out.printf("O aluno de id %d foi deletado\n", this.id);
+            } else {
+                System.out.println("Aluno não encontrado.\n");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+	}
 }

@@ -39,6 +39,9 @@ public class CRUD {
 	        		case 3:
 	        			aluno.updateAluno(conn);
 	        			break;
+	        		case 4:
+	        			aluno.deleteAluno(conn);
+	        			break;
 	        		default:
 	    	            System.out.println("\nOpção inválida\n");
 	    	            break;
@@ -58,6 +61,8 @@ public class CRUD {
 	        		case 3:
 	        			nota.updateNota(conn);
 	        			break;
+	        		case 4:
+	        			nota.deleteNota(conn);
 	        		default:
 	    	            System.out.println("\nOpção inválida\n");
 	    	            break;
