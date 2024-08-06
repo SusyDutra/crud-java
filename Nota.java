@@ -15,17 +15,42 @@ public class Nota {
 	}
 	
 	public void recebeNotaInput(String complemento) {
-		System.out.println("\nDigite a nota " + complemento + " (separe as casas decimais com uma vírgula): ");
-		float novaNota = scanner.nextFloat();
-        this.nota = novaNota;
+		while(true) {
+			System.out.println("\nDigite a nota " + complemento + " (separe as casas decimais com uma vírgula): ");
+			
+			float novaNota;
+			try {
+				novaNota = this.scanner.nextFloat();
+				this.nota = novaNota;
+				
+				break;
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				this.scanner.nextLine();
+			}
+			
+		}
+
+		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
 	private void recebeIdInput(String complemento) {
-		System.out.println("\nDigite o id da nota " + complemento);
-		int idAluno = scanner.nextInt();
-        this.id = idAluno;
+		while(true) {
+			System.out.println("\nDigite o id da nota " + complemento);
+			
+			int idAluno;
+			try {
+				idAluno = this.scanner.nextInt();
+				this.id = idAluno;
+				
+				break;
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				this.scanner.nextLine();
+			}
+		}
         
-        scanner.nextLine(); // para ler o \n deixado
+		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
 	public void createNota(Connection conn) {

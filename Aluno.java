@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Aluno {
@@ -15,17 +16,43 @@ public class Aluno {
 	}
 	
 	private void recebeNomeInput(String complemento) {
-		System.out.println("\nDigite o nome " + complemento);
-        String novoAluno = scanner.nextLine();
-        this.nome = novoAluno;
+		while(true) {
+			System.out.println("\nDigite o nome " + complemento);
+			
+			String novoAluno;
+			try {
+				novoAluno = scanner.nextLine();
+				this.nome = novoAluno;
+				
+				if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
+					break;
+				} else {
+					System.out.println("Input inválido.\n");
+				}
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				scanner.nextLine();
+			}			
+		}
 	}
 	
 	private void recebeIdInput(String complemento) {
-		System.out.println("\nDigite o id do aluno " + complemento);
-		int idAluno = scanner.nextInt();
-        this.id = idAluno;
+		while(true) {
+			System.out.println("\nDigite o id do aluno " + complemento);
+			
+			int idAluno;
+			try {
+				idAluno = this.scanner.nextInt();
+				this.id = idAluno;
+
+				break;
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				this.scanner.nextLine();
+			}
+		}
         
-        scanner.nextLine(); // para ler o \n deixado
+		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
 	public void createAluno(Connection conn) {
