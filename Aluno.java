@@ -8,41 +8,62 @@ public class Aluno {
 	
 	private int id;
 	private String nome;
-	public Scanner scanner;
-
-	//public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	//}
+	private Scanner scanner;
 	
 	public Aluno(Scanner scanner) {
 		this.scanner = scanner;
 	}
 	
 	private void recebeNomeInput(String complemento) {
-		System.out.println("\nDigite o nome " + complemento);
-        String novoAluno = scanner.nextLine();
-        this.nome = novoAluno;
+		while(true) {
+			System.out.println("\nDigite o nome " + complemento);
+			
+			String novoAluno;
+			try {
+				novoAluno = scanner.nextLine();
+				this.nome = novoAluno;
+				
+				if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
+					break;
+				} else {
+					System.out.println("Input inválido.\n");
+				}
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				scanner.nextLine();
+			}			
+		}
 	}
 	
 	private void recebeIdInput(String complemento) {
-		System.out.println("\nDigite o id do aluno " + complemento);
-		int idAluno = scanner.nextInt();
-        this.id = idAluno;
+		while(true) {
+			System.out.println("\nDigite o id do aluno " + complemento);
+			
+			int idAluno;
+			try {
+				idAluno = this.scanner.nextInt();
+				this.id = idAluno;
+
+				break;
+			} catch (Exception e) {
+				System.out.println("Input inválido.\n");
+				this.scanner.nextLine();
+			}
+		}
         
-        scanner.nextLine(); // para ler o \n deixado
+		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
-	public void createAluno(Connection conn) {
+	public void createAluno(Connection conexao) {
 		recebeNomeInput("que quer inserir: ");
 		
     	String sql = "INSERT INTO aluno (nome) VALUES (?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, this.nome);
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+        	comando.setString(1, this.nome);
 
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted > 0) {
+            int inserido = comando.executeUpdate();
+            if (inserido == 1) {
                 System.out.println("Um novo aluno foi inserido com sucesso!");
             }
         } catch (SQLException e) {
@@ -50,17 +71,17 @@ public class Aluno {
         }
     }
 	
-	public void readAluno(Connection conn) {
+	public void readAluno(Connection conexao) {
 		recebeIdInput("que quer ler: ");
 		
         String sql = "SELECT nome FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            ResultSet resultado = comando.executeQuery();
 
-            if (rs.next()) {
-            	this.nome = rs.getString("nome");
+            if (resultado.next()) {
+            	this.nome = resultado.getString("nome");
                 System.out.printf("ID: %d, nome: %s%n\n", this.id, this.nome);
             } else {
                 System.out.println("Aluno não encontrado.\n");
@@ -70,16 +91,16 @@ public class Aluno {
         }
     }
 	
-	public void updateAluno(Connection conn) {
+	public void updateAluno(Connection conexao) {
 		recebeIdInput("que quer atualizar o nome: ");
 		recebeNomeInput("atualizado: ");
 		
         String sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	pstmt.setString(1, this.nome);
-            pstmt.setInt(2, this.id);
-            int atualizou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+        	comando.setString(1, this.nome);
+        	comando.setInt(2, this.id);
+            int atualizou = comando.executeUpdate();
 
             if (atualizou == 1) {
                 System.out.printf("O aluno de id %d agora tem nome: %s%n\n", this.id, this.nome);
@@ -91,14 +112,14 @@ public class Aluno {
         }
     }
 	
-	public void deleteAluno(Connection conn) {
+	public void deleteAluno(Connection conexao) {
 		recebeIdInput("que quer deletar: ");
 		
     	String sql = "DELETE FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, this.id);
-            int deletou = pstmt.executeUpdate();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+        	comando.setInt(1, this.id);
+            int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
                 System.out.printf("O aluno de id %d foi deletado\n", this.id);
