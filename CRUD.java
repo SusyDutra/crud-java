@@ -10,9 +10,9 @@ public class CRUD {
 	
     public static void main(String[] args) {
 
-    	Connection conn = null;
+    	Connection conexao = null;
     	try {
-			conn = conexao();
+			conexao = conectar();
 		} catch (Exception e) {
 			System.out.println("A conexão com o banco de dados foi mal sucedida.");
 			System.exit(0);
@@ -65,20 +65,17 @@ public class CRUD {
 
 	        	switch(escolhaOperacao) {
 	        		case 1:
-			            aluno.createAluno(conn);
+			            aluno.createAluno(conexao);
 			            break;
 	        		case 2:
-	        			aluno.readAluno(conn);
+	        			aluno.readAluno(conexao);
 	        			break;
 	        		case 3:
-	        			aluno.updateAluno(conn);
+	        			aluno.updateAluno(conexao);
 	        			break;
 	        		case 4:
-	        			aluno.deleteAluno(conn);
+	        			aluno.deleteAluno(conexao);
 	        			break;
-	        		default:
-	    	            System.out.println("\nOpção inválida\n");
-	    	            break;
 	        	}
         	break;
 	            
@@ -87,35 +84,28 @@ public class CRUD {
 	        	
 	        	switch(escolhaOperacao) {
 	        		case 1:
-	        			nota.createNota(conn);
+	        			nota.createNota(conexao);
 	        			break;
 	        		case 2:
-	        			nota.readNota(conn);
+	        			nota.readNota(conexao);
 	        			break;
 	        		case 3:
-	        			nota.updateNota(conn);
+	        			nota.updateNota(conexao);
 	        			break;
 	        		case 4:
-	        			nota.deleteNota(conn);
-	        		default:
-	    	            System.out.println("\nOpção inválida\n");
-	    	            break;
+	        			nota.deleteNota(conexao);
 	        	}	
         	break;
- 
-	        default:
-	            System.out.println("\nOpção inválida\n");
-	            break;
         }     
 
         scanner.close();
     }
 
-    private static Connection conexao () throws SQLException {
-    	Connection conn = null;
+    private static Connection conectar () throws SQLException {
+    	Connection conexao = null;
  
         try {
-        	conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/exati", "guia", "asdumsiyn");
+        	conexao = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/exati", "guia", "asdumsiyn");
         } catch (Exception e) {
             System.out.println("Falha na conexão com o banco");
         }
@@ -126,11 +116,11 @@ public class CRUD {
         	System.out.println("Falha na conexão com o driver");
         }
     
-        if (conn == null) {
+        if (conexao == null) {
             throw new SQLException();
         }
 
-        return conn;
+        return conexao;
     }
     
     

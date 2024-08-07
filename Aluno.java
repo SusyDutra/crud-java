@@ -9,7 +9,7 @@ public class Aluno {
 	
 	private int id;
 	private String nome;
-	public Scanner scanner;
+	private Scanner scanner;
 	
 	public Aluno(Scanner scanner) {
 		this.scanner = scanner;
@@ -55,12 +55,12 @@ public class Aluno {
 		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
-	public void createAluno(Connection conn) {
+	public void createAluno(Connection conexao) {
 		recebeNomeInput("que quer inserir: ");
 		
     	String sql = "INSERT INTO aluno (nome) VALUES (?)";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setString(1, this.nome);
 
             int inserido = comando.executeUpdate();
@@ -72,12 +72,12 @@ public class Aluno {
         }
     }
 	
-	public void readAluno(Connection conn) {
+	public void readAluno(Connection conexao) {
 		recebeIdInput("que quer ler: ");
 		
         String sql = "SELECT nome FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setInt(1, this.id);
             ResultSet resultado = comando.executeQuery();
 
@@ -92,13 +92,13 @@ public class Aluno {
         }
     }
 	
-	public void updateAluno(Connection conn) {
+	public void updateAluno(Connection conexao) {
 		recebeIdInput("que quer atualizar o nome: ");
 		recebeNomeInput("atualizado: ");
 		
         String sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setString(1, this.nome);
         	comando.setInt(2, this.id);
             int atualizou = comando.executeUpdate();
@@ -113,12 +113,12 @@ public class Aluno {
         }
     }
 	
-	public void deleteAluno(Connection conn) {
+	public void deleteAluno(Connection conexao) {
 		recebeIdInput("que quer deletar: ");
 		
     	String sql = "DELETE FROM aluno WHERE id_aluno = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setInt(1, this.id);
             int deletou = comando.executeUpdate();
 

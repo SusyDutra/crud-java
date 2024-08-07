@@ -8,7 +8,7 @@ public class Nota {
 
 	private int id;
 	private float nota;
-	public Scanner scanner;
+	private Scanner scanner;
 	
 	public Nota(Scanner scanner) {
 		this.scanner = scanner;
@@ -28,7 +28,6 @@ public class Nota {
 				System.out.println("Input inválido.\n");
 				this.scanner.nextLine();
 			}
-			
 		}
 
 		this.scanner.nextLine(); // para ler o \n deixado
@@ -53,12 +52,12 @@ public class Nota {
 		this.scanner.nextLine(); // para ler o \n deixado
 	}
 	
-	public void createNota(Connection conn) {
+	public void createNota(Connection conexao) {
 		recebeNotaInput("que que adicionar");
 
     	String sql = "INSERT INTO nota (nota) VALUES (?)";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setFloat(1, this.nota);
 
             int inserido = comando.executeUpdate();
@@ -68,16 +67,14 @@ public class Nota {
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
-    }
-
-    
+    }    
  
-    public void readNota(Connection conn) {
+    public void readNota(Connection conexao) {
     	recebeIdInput("que quer ver");
 
         String sql = "SELECT nota FROM nota WHERE id_nota = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setInt(1, this.id);
             ResultSet inserido = comando.executeQuery();
 
@@ -92,13 +89,13 @@ public class Nota {
         }
     }
     
-    public void updateNota(Connection conn) {
+    public void updateNota(Connection conexao) {
 		recebeIdInput("que quer atualizar: ");
 		recebeNotaInput("atualizada");
 		
         String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setFloat(1, this.nota);
         	comando.setInt(2, this.id);
             int atualizou = comando.executeUpdate();
@@ -113,12 +110,12 @@ public class Nota {
         }
     }
     
-    public void deleteNota(Connection conn) {
+    public void deleteNota(Connection conexao) {
 		recebeIdInput("que quer deletar: ");
 		
     	String sql = "DELETE FROM nota WHERE id_nota = ?";
 
-        try (PreparedStatement comando = conn.prepareStatement(sql)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setInt(1, this.id);
             int deletou = comando.executeUpdate();
 
