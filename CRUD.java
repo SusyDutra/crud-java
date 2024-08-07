@@ -17,35 +17,24 @@ public class CRUD {
 		}
     	
     	Scanner scanner = new Scanner(System.in);
-
-    	int escolhaTabela;
-    	while(true) {
-    		System.out.println("Escolha qual tabela deseja operar:\n1 - Tabela Aluno\n2 - Tabela Nota\n");
-    		
-    		try {
-    			escolhaTabela = scanner.nextInt();
-    			
-    			if(escolhaTabela == 1 || escolhaTabela == 2) {
-    				break;
-    			} else {
-    				System.out.println("Opção inválida.\n");
-    			}
-    		} catch (Exception e) {
-    			System.out.println("Opção inválida.\n");
-    			scanner.nextLine();
-    		}
-    	}
-    	scanner.nextLine();
         
         int escolhaOperacao;
-        
-        while(true) {
-        	System.out.println("Agora, a operação:\n1 - CREATE\n2 - READ\n3 - UPDATE\n4 - DELETE\n");
-        	
+		while(true) {
+        	System.out.println("Menu de opções:\n"
+        					 + "1 - Criar um aluno\n"
+        					 + "2 - Criar uma nota\n"
+        					 + "3 - Buscar um aluno\n"
+        					 + "4 - Buscar todos os alunos\n"
+        					 + "5 - Buscar uma nota\n"
+        					 + "6 - Buscar todas as notas\n"
+        					 + "7 - Atualizar um aluno\n"
+        					 + "8 - Atualizar uma nota\n"
+        					 + "9 - Deletar um aluno\n"
+        					 + "10 - Deletar uma nota");
         	try {
         		escolhaOperacao = scanner.nextInt();
     			
-        		if(List.of(1, 2, 3, 4).contains(escolhaOperacao)) {
+        		if(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).contains(escolhaOperacao)) {
     				break;
     			} else {
     				System.out.println("Opção inválida.\n");
@@ -57,43 +46,25 @@ public class CRUD {
         }
         scanner.nextLine();
 
-        switch (escolhaTabela) {
-	        case 1:
-	        	Aluno aluno = new Aluno(scanner);
-
-	        	switch(escolhaOperacao) {
-	        		case 1:
-			            aluno.createAluno(conexao);
-			            break;
-	        		case 2:
-	        			aluno.readAluno(conexao);
-	        			break;
-	        		case 3:
-	        			aluno.updateAluno(conexao);
-	        			break;
-	        		case 4:
-	        			aluno.deleteAluno(conexao);
-	        			break;
-	        	}
-        	break;
-	            
-	        case 2:
-	        	Nota nota = new Nota(scanner);
-	        	
-	        	switch(escolhaOperacao) {
-	        		case 1:
-	        			nota.createNota(conexao);
-	        			break;
-	        		case 2:
-	        			nota.readNota(conexao);
-	        			break;
-	        		case 3:
-	        			nota.updateNota(conexao);
-	        			break;
-	        		case 4:
-	        			nota.deleteNota(conexao);
-	        	}	
-        	break;
+        switch (escolhaOperacao) {
+    		case 1, 7:
+	            Aluno.saveAluno(conexao);
+	            break;
+    		case 2, 8:
+    			Nota.saveNota(conexao);
+    			break;
+    		case 3, 4:
+    			Aluno.readAluno(conexao);
+    			break;
+    		case 5, 6:
+    			Nota.readNota(conexao);
+    			break;
+    		case 9:
+    			Aluno.deleteAluno(conexao);
+    			break;
+    		case 10:
+    			Nota.deleteNota(conexao);    			
+    			break;
         }     
 
         scanner.close();
