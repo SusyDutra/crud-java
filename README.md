@@ -11,7 +11,8 @@ Tabela aluno
 | nome           | VARCHAR(15)  |
 
 Tabela nota
-| nome da coluna | tipo de dado  |
-| -------------  | ------------- |
-| id_nota        | SERIAL        |
-| nota           | DECIMAL(2, 1) |
+| nome da coluna               | tipo de dado  |
+| ---------------------------  | ------------- |
+| id_nota                      | SERIAL        |
+| nota                         | DECIMAL(2, 1) |
+| id_aluno FK(aluno(id_aluno)) | INT           |
