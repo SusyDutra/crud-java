@@ -47,23 +47,55 @@ public class CRUD {
         scanner.nextLine();
 
         switch (escolhaOperacao) {
-    		case 1, 7:
-	            Aluno.saveAluno(conexao);
+    		case 1: // create
+    			String nomeCA = Aluno.recebeNomeInput(scanner, " que quer adicionar: ");
+    			Aluno.saveAluno(conexao, scanner, nomeCA, -1);
+    			break;
+    
+    		case 7: // update
+    			int idUA = Aluno.recebeIdInput(scanner, " que quer atualizar o nome: ");
+    			String nomeUA = Aluno.recebeNomeInput(scanner, " atualizado: ");
+    			Aluno.saveAluno(conexao, scanner, nomeUA, idUA);
 	            break;
-    		case 2, 8:
-    			Nota.saveNota(conexao);
+	       
+    		case 2: // create
+    			float notaCN = Nota.recebeNotaInput(scanner, " que que adicionar:");
+    			int idCN = Aluno.recebeIdInput(scanner, ": ");
+    			Nota.saveNota(conexao, scanner, notaCN, idCN, true);
     			break;
-    		case 3, 4:
-    			Aluno.readAluno(conexao);
+    			
+    		case 8: // update
+    			int idUN = Nota.recebeIdInput(scanner, " que será atualizada: ");
+    			float notaUN = Nota.recebeNotaInput(scanner, " atualizada: ");
+    			Nota.saveNota(conexao, scanner, notaUN, idUN, false);
     			break;
-    		case 5, 6:
-    			Nota.readNota(conexao);
+    			
+    		case 3: // um aluno
+    			int idRA = Aluno.recebeIdInput(scanner, ": ");
+    			Aluno.readAluno(conexao, scanner, idRA);
     			break;
+    			
+    		case 4: // todos os alunos
+    			Aluno.readAluno(conexao, scanner, -1);
+    			break;
+    			
+    		case 5: // uma nota
+    			int idRN = Nota.recebeIdInput(scanner, ": ");
+    			Nota.readNota(conexao, scanner, idRN);
+    			break;
+    			
+    		case 6: // todas as notas
+    			Nota.readNota(conexao, scanner, -1);
+    			break;
+    			
     		case 9:
-    			Aluno.deleteAluno(conexao);
+    			int idDA = Aluno.recebeIdInput(scanner, " que quer deletar: ");
+    			Aluno.deleteAluno(conexao, scanner, idDA);
     			break;
+    			
     		case 10:
-    			Nota.deleteNota(conexao);    			
+    			int idDN = Nota.recebeIdInput(scanner, " que quer deletar: ");
+    			Nota.deleteNota(conexao, scanner, idDN);    			
     			break;
         }     
 

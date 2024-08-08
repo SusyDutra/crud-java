@@ -5,82 +5,100 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Nota {
-
-	private int id;
-	private float nota;
-	private Scanner scanner;
 	
-	public Nota(Scanner scanner) {
-		this.scanner = scanner;
-	}
-	
-	public void recebeNotaInput(String complemento) {
+	public static float recebeNotaInput(Scanner scanner, String complemento) {
+		float novaNota;
+		
 		while(true) {
-			System.out.println("\nDigite a nota " + complemento + " (separe as casas decimais com uma vírgula): ");
+			System.out.println("\nDigite a nota" + complemento + " (separe as casas decimais com uma vírgula): ");
 			
-			float novaNota;
 			try {
-				novaNota = this.scanner.nextFloat();
-				this.nota = novaNota;
+				novaNota = scanner.nextFloat();
 				
 				break;
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
-				this.scanner.nextLine();
+				scanner.nextLine();
 			}
 		}
 
-		this.scanner.nextLine(); // para ler o \n deixado
+		scanner.nextLine(); // para ler o \n deixado
+		
+		return novaNota;
 	}
 	
-	private void recebeIdInput(String complemento) {
+	public static int recebeIdInput(Scanner scanner, String complemento) {
+		int idAluno;
+		
 		while(true) {
-			System.out.println("\nDigite o id da nota " + complemento);
+			System.out.println("\nDigite o id da nota" + complemento);
 			
-			int idAluno;
 			try {
-				idAluno = this.scanner.nextInt();
-				this.id = idAluno;
+				idAluno = scanner.nextInt();
 				
 				break;
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
-				this.scanner.nextLine();
+				scanner.nextLine();
 			}
 		}
         
-		this.scanner.nextLine(); // para ler o \n deixado
+		scanner.nextLine(); // para ler o \n deixado
+		return idAluno;
 	}
 	
-	public void createNota(Connection conexao) {
-		recebeNotaInput("que que adicionar");
+	public static void saveNota(Connection conexao, Scanner scanner, float nota, int id, boolean create) {
+		if(create) { // create
+			String sql = "INSERT INTO nota (nota, id_aluno) VALUES (?, ?)";
+			
+			try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+				comando.setFloat(1, nota);
+				comando.setInt(2, id);
+				
+				int inserido = comando.executeUpdate();
+				if (inserido == 1) {
+					System.out.println("Uma nova nota foi inserida com sucesso!");
+				}
+			} catch (SQLException e) {
+				if("23503".equals(e.getSQLState())){
+					System.out.println("Aluno não encontrado. Inserção abortada\n");
+				}
+				System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+			}
+		} else {
+	        String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
 
-    	String sql = "INSERT INTO nota (nota) VALUES (?)";
+	        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+	        	comando.setFloat(1, nota);
+	        	comando.setInt(2, id);
+	            int atualizou = comando.executeUpdate();
 
-        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setFloat(1, this.nota);
-
-            int inserido = comando.executeUpdate();
-            if (inserido == 1) {
-                System.out.println("Uma nova nota foi inserida com sucesso!");
-            }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        }
+	            if (atualizou == 1) {
+	                System.out.printf("A nota de id %d agora vale: %.1f%n\n", id, nota);
+	            } else {
+	                System.out.println("Nota não encontrada.\n");
+	            }
+	        } catch (SQLException e) {
+	            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+	        }
+		}
     }    
  
-    public void readNota(Connection conexao) {
-    	recebeIdInput("que quer ver");
-
-        String sql = "SELECT nota FROM nota WHERE id_nota = ?";
+    public static void readNota(Connection conexao, Scanner scanner, int id) {
+        String sql = "SELECT nota FROM nota";
+        
+        if(id != -1) { sql += " WHERE id_nota = ?"; }
 
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setInt(1, this.id);
-            ResultSet inserido = comando.executeQuery();
+        	comando.setInt(1, id);
+            ResultSet resultado = comando.executeQuery();
 
-            if (inserido.next()) {
-            	this.nota = inserido.getFloat("nota");
-                System.out.printf("ID: %d, nota: %.2f%n\n", this.id, this.nota);
+            if (resultado.first()) {
+                do{
+                	float notaResultado = resultado.getFloat("nota");
+            		int idResultado = resultado.getInt("id_aluno");
+            		System.out.printf("ID: %d, nota: %.2f%n\n", idResultado, notaResultado);
+            	} while (resultado.next());   
             } else {
                 System.out.println("Nota não encontrada.\n");
             }
@@ -88,41 +106,20 @@ public class Nota {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
+   
     
-    public void updateNota(Connection conexao) {
-		recebeIdInput("que quer atualizar: ");
-		recebeNotaInput("atualizada");
-		
-        String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
-
-        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setFloat(1, this.nota);
-        	comando.setInt(2, this.id);
-            int atualizou = comando.executeUpdate();
-
-            if (atualizou == 1) {
-                System.out.printf("A nota de id %d agora vale: %f%n\n", this.id, this.nota);
-            } else {
-                System.out.println("Nota não encontrada.\n");
-            }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        }
-    }
-    
-    public void deleteNota(Connection conexao) {
-		recebeIdInput("que quer deletar: ");
-		
+    public static void deleteNota(Connection conexao, Scanner scanner, int id) {
+	
     	String sql = "DELETE FROM nota WHERE id_nota = ?";
 
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setInt(1, this.id);
+        	comando.setInt(1, id);
             int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
-                System.out.printf("O aluno de id %d foi deletado\n", this.id);
+                System.out.printf("A nota de id %d foi deletado\n", id);
             } else {
-                System.out.println("Aluno não encontrado.\n");
+                System.out.println("Nota não encontrado.\n");
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
