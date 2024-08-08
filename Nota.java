@@ -15,7 +15,11 @@ public class Nota {
 			try {
 				novaNota = scanner.nextFloat();
 				
-				break;
+				if(novaNota < 0 || novaNota > 10) {
+					System.out.println("Input inválido.\n");
+				} else {
+					break;					
+				}
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
 				scanner.nextLine();

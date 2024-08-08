@@ -15,7 +15,10 @@ public class Aluno {
 			try {
 				novoAluno = scanner.nextLine();
 				
-				if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
+				if(novoAluno.length() > 15) {
+					System.out.println("O nome deve ter no máximo 15 caracteres.\n");
+				}
+				else if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
 					break;
 				} else {
 					System.out.println("Input inválido.\n");
