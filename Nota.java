@@ -104,7 +104,7 @@ public class Nota {
                 do{
                 	float notaResultado = resultado.getFloat("nota");
             		int idResultado = resultado.getInt("id_nota");
-            		System.out.printf("ID: %d, nota: %.2f%n\n", idResultado, notaResultado);
+            		System.out.printf("ID: %d, nota: %.1f%n\n", idResultado, notaResultado);
             	} while (resultado.next());   
             } else {
                 System.out.println("Nota não encontrada.\n");
