@@ -48,39 +48,34 @@ public class Nota {
 	}
 	
 	public static void saveNota(Connection conexao, Scanner scanner, float nota, int id, boolean create) {
-		if(create) { // create
-			String sql = "INSERT INTO nota (nota, id_aluno) VALUES (?, ?)";
+		String sql = "";
+
+		if(create) { sql = "INSERT INTO nota (nota, id_aluno) VALUES (?, ?)"; }
+		else { sql = "UPDATE nota SET nota = ? WHERE id_nota = ?"; }
+
+		try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+			comando.setFloat(1, nota);
+			comando.setInt(2, id);
 			
-			try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-				comando.setFloat(1, nota);
-				comando.setInt(2, id);
-				
-				int inserido = comando.executeUpdate();
-				if (inserido == 1) {
-					System.out.println("Uma nova nota foi inserida com sucesso!");
+			int acao = comando.executeUpdate();
+			if (create) {
+				if(acao == 1) {
+					System.out.println("Uma nova nota foi inserida com sucesso!\n");					
+				} else {
+					System.out.println("A nota não foi criada.\n");					
 				}
-			} catch (SQLException e) {
-				if("23503".equals(e.getSQLState())){
-					System.out.println("Aluno não encontrado. Inserção abortada\n");
+			} else {
+				if(acao == 1) {
+					System.out.printf("A nota de id %d agora vale: %.1f%n\n", id, nota);
+				} else {
+					System.out.println("Nota não encontrada.\n");
 				}
-				System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 			}
-		} else {
-	        String sql = "UPDATE nota SET nota = ? WHERE id_nota = ?";
-
-	        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-	        	comando.setFloat(1, nota);
-	        	comando.setInt(2, id);
-	            int atualizou = comando.executeUpdate();
-
-	            if (atualizou == 1) {
-	                System.out.printf("A nota de id %d agora vale: %.1f%n\n", id, nota);
-	            } else {
-	                System.out.println("Nota não encontrada.\n");
-	            }
-	        } catch (SQLException e) {
-	            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-	        }
+		} catch (SQLException e) {
+			if("23503".equals(e.getSQLState())){ // violates foreign key constraint
+				System.out.println("Aluno não encontrado. Inserção abortada\n");
+			}
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 		}
     }    
  
