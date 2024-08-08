@@ -20,7 +20,7 @@ public class CRUD {
         
         int escolhaOperacao;
 		while(true) {
-        	System.out.println("Menu de opções:\n"
+        	System.out.println("\nMenu de opções:\n"
         					 + "1 - Criar um aluno\n"
         					 + "2 - Criar uma nota\n"
         					 + "3 - Buscar um aluno\n"
@@ -31,12 +31,16 @@ public class CRUD {
         					 + "8 - Atualizar um aluno\n"
         					 + "9 - Atualizar uma nota\n"
         					 + "10 - Deletar um aluno\n"
-        					 + "11 - Deletar uma nota");
+        					 + "11 - Deletar uma nota\n\n"
+        					 + "0 - sair do programa\n\n");
         	try {
         		escolhaOperacao = scanner.nextInt();
+        		scanner.nextLine();
     			
-        		if(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).contains(escolhaOperacao)) {
-    				break;
+        		if(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).contains(escolhaOperacao)) {
+    				if( !crud(conexao, scanner, escolhaOperacao) ) {
+    					break;
+    				}
     			} else {
     				System.out.println("Opção inválida.\n");
     			}
@@ -45,70 +49,77 @@ public class CRUD {
     			scanner.nextLine();
     		}
         }
-        scanner.nextLine();
-
-        switch (escolhaOperacao) {
-    		case 1: // create
-    			String nomeCA = Aluno.recebeNomeInput(scanner, " que quer adicionar: ");
-    			Aluno.saveAluno(conexao, scanner, nomeCA, -1);
-    			break;
-    
-    		case 8: // update
-    			int idUA = Aluno.recebeIdInput(scanner, " que quer atualizar o nome: ");
-    			String nomeUA = Aluno.recebeNomeInput(scanner, " atualizado: ");
-    			Aluno.saveAluno(conexao, scanner, nomeUA, idUA);
-	            break;
-	       
-    		case 2: // create
-    			float notaCN = Nota.recebeNotaInput(scanner, " que que adicionar:");
-    			int idCN = Aluno.recebeIdInput(scanner, ": ");
-    			Nota.saveNota(conexao, scanner, notaCN, idCN, true);
-    			break;
-    			
-    		case 9: // update
-    			int idUN = Nota.recebeIdInput(scanner, " que será atualizada: ");
-    			float notaUN = Nota.recebeNotaInput(scanner, " atualizada: ");
-    			Nota.saveNota(conexao, scanner, notaUN, idUN, false);
-    			break;
-    			
-    		case 3: // um aluno
-    			int idRA = Aluno.recebeIdInput(scanner, ": ");
-    			Aluno.readAluno(conexao, scanner, idRA);
-    			break;
-    			
-    		case 4: // todos os alunos
-    			Aluno.readAluno(conexao, scanner, -1);
-    			break;
-    			
-    		case 5: // uma nota
-    			int idRN = Nota.recebeIdInput(scanner, ": ");
-    			Nota.readNota(conexao, scanner, idRN, -1);
-    			break;
-    			
-    		case 6: // todas as notas
-    			Nota.readNota(conexao, scanner, -1, -1);
-    			break;
-   
-    		case 7: // todas as notas de um aluno
-    			int idAlunoRN = Aluno.recebeIdInput(scanner, ": ");
-    			Nota.readNota(conexao, scanner, -1, idAlunoRN);
-    			break;
-   
-    		case 10:
-    			int idDA = Aluno.recebeIdInput(scanner, " que quer deletar: ");
-    			Aluno.deleteAluno(conexao, scanner, idDA);
-    			break;
-    			
-    		case 11:
-    			int idDN = Nota.recebeIdInput(scanner, " que quer deletar: ");
-    			Nota.deleteNota(conexao, scanner, idDN);    			
-    			break;
-        }     
-
+		
         scanner.close();
     }
 
-    private static Connection conectar () throws SQLException {
+    private static boolean crud(Connection conexao, Scanner scanner, int operacao) {
+		
+    	switch (operacao) {
+    	case 0:
+    		return false;
+  
+		case 1: // create
+			String nomeCA = Aluno.recebeNomeInput(scanner, " que quer adicionar: ");
+			Aluno.saveAluno(conexao, scanner, nomeCA, -1);
+			break;
+
+		case 8: // update
+			int idUA = Aluno.recebeIdInput(scanner, " que quer atualizar o nome: ");
+			String nomeUA = Aluno.recebeNomeInput(scanner, " atualizado: ");
+			Aluno.saveAluno(conexao, scanner, nomeUA, idUA);
+            break;
+       
+		case 2: // create
+			float notaCN = Nota.recebeNotaInput(scanner, " que que adicionar:");
+			int idCN = Aluno.recebeIdInput(scanner, ": ");
+			Nota.saveNota(conexao, scanner, notaCN, idCN, true);
+			break;
+			
+		case 9: // update
+			int idUN = Nota.recebeIdInput(scanner, " que será atualizada: ");
+			float notaUN = Nota.recebeNotaInput(scanner, " atualizada: ");
+			Nota.saveNota(conexao, scanner, notaUN, idUN, false);
+			break;
+			
+		case 3: // um aluno
+			int idRA = Aluno.recebeIdInput(scanner, ": ");
+			Aluno.readAluno(conexao, scanner, idRA);
+			break;
+			
+		case 4: // todos os alunos
+			Aluno.readAluno(conexao, scanner, -1);
+			break;
+			
+		case 5: // uma nota
+			int idRN = Nota.recebeIdInput(scanner, ": ");
+			Nota.readNota(conexao, scanner, idRN, -1);
+			break;
+			
+		case 6: // todas as notas
+			Nota.readNota(conexao, scanner, -1, -1);
+			break;
+
+		case 7: // todas as notas de um aluno
+			int idAlunoRN = Aluno.recebeIdInput(scanner, ": ");
+			Nota.readNota(conexao, scanner, -1, idAlunoRN);
+			break;
+
+		case 10:
+			int idDA = Aluno.recebeIdInput(scanner, " que quer deletar: ");
+			Aluno.deleteAluno(conexao, scanner, idDA);
+			break;
+			
+		case 11:
+			int idDN = Nota.recebeIdInput(scanner, " que quer deletar: ");
+			Nota.deleteNota(conexao, scanner, idDN);    			
+			break;
+    	}
+    	
+    	return true;
+	}
+
+	private static Connection conectar () throws SQLException {
     	Connection conexao = null;
  
         try {

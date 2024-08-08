@@ -58,7 +58,7 @@ public class Aluno {
 				
 				int inserido = comando.executeUpdate();
 				if (inserido == 1) {
-					System.out.println("Um novo aluno foi inserido com sucesso!");
+					System.out.println("Um novo aluno foi inserido com sucesso!\n");
 				}
 			} catch (SQLException e) {
 				System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
