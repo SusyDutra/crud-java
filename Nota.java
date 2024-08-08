@@ -84,20 +84,27 @@ public class Nota {
 		}
     }    
  
-    public static void readNota(Connection conexao, Scanner scanner, int id) {
-        String sql = "SELECT nota FROM nota";
+    public static void readNota(Connection conexao, Scanner scanner, int idNota, int idAluno) {
+        String sql = "SELECT nota, id_nota FROM nota";
         
-        if(id != -1) { sql += " WHERE id_nota = ?"; }
+        int id = -1;
 
-        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setInt(1, id);
+        if(idNota != -1) { sql += " WHERE id_nota = ?"; id = idNota; }
+        
+        if(idAluno != -1) { sql += " WHERE id_aluno = ?"; id = idAluno; }
+
+        try (PreparedStatement comando = conexao.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+        	if(idNota != -1 || idAluno != -1) {
+        		comando.setInt(1, id);        		
+        	}
+
             ResultSet resultado = comando.executeQuery();
 
             if (resultado.first()) {
                 do{
                 	float notaResultado = resultado.getFloat("nota");
-            		int idResultado = resultado.getInt("id_aluno");
-            		System.out.printf("ID: %d, nota: %.2f%n\n", idResultado, notaResultado);
+            		int idResultado = resultado.getInt("id_nota");
+            		System.out.printf("ID: %d, nota: %.1f%n\n", idResultado, notaResultado);
             	} while (resultado.next());   
             } else {
                 System.out.println("Nota não encontrada.\n");
@@ -117,9 +124,9 @@ public class Nota {
             int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
-                System.out.printf("A nota de id %d foi deletado\n", id);
+                System.out.printf("A nota de id %d foi deletada\n", id);
             } else {
-                System.out.println("Nota não encontrado.\n");
+                System.out.println("Nota não encontrada.\n");
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());

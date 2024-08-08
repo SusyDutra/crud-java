@@ -88,7 +88,7 @@ public class Aluno {
         
         if(id != -1) { sql += " WHERE id_aluno = ?"; }
 
-        try (PreparedStatement comando = conexao.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY)) {
+        try (PreparedStatement comando = conexao.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
         	if(id != -1) { comando.setInt(1, id); }
         	
             ResultSet resultado = comando.executeQuery();
