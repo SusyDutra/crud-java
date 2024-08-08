@@ -35,7 +35,7 @@ public class CRUD {
         	try {
         		escolhaOperacao = scanner.nextInt();
     			
-        		if(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).contains(escolhaOperacao)) {
+        		if(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).contains(escolhaOperacao)) {
     				break;
     			} else {
     				System.out.println("Opção inválida.\n");

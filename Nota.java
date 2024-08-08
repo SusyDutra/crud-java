@@ -124,9 +124,9 @@ public class Nota {
             int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
-                System.out.printf("A nota de id %d foi deletado\n", id);
+                System.out.printf("A nota de id %d foi deletada\n", id);
             } else {
-                System.out.println("Nota não encontrado.\n");
+                System.out.println("Nota não encontrada.\n");
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
