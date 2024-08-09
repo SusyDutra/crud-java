@@ -40,8 +40,12 @@ public class Aluno {
 			
 			try {
 				idAluno = scanner.nextInt();
-
-				break;
+				
+				if(idAluno <= 0) {
+					System.out.println("O id é um número maior que zero\n");
+				} else {
+					break;					
+				}
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
 				scanner.nextLine();
@@ -111,7 +115,7 @@ public class Aluno {
     }
 	
 	
-	public static void deleteAluno(Connection conexao, Scanner scanner, int id) {		
+	public static boolean deleteAluno(Connection conexao, Scanner scanner, int id) {		
     	String sql = "DELETE FROM aluno WHERE id_aluno = ?";
 
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -120,11 +124,14 @@ public class Aluno {
 
             if (deletou == 1) {
                 System.out.printf("O aluno de id %d foi deletado\n", id);
+                return true;
             } else {
                 System.out.println("Aluno não encontrado.\n");
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
+  
+        return false;
 	}
 }
