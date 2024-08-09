@@ -3,8 +3,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.text.DecimalFormat;
 
 public class Nota {
+	private static final DecimalFormat df = new DecimalFormat("0.00");
 	
 	public static float recebeNotaInput(Scanner scanner, String complemento) {
 		float novaNota;
@@ -84,7 +86,7 @@ public class Nota {
     }    
  
     public static void readNota(Connection conexao, Scanner scanner, int idNota, int idAluno) {
-        String sql = "SELECT nota, id_nota FROM nota";
+        String sql = "SELECT nota, id_nota, id_aluno FROM nota";
         
         int id = -1;
 
@@ -103,7 +105,8 @@ public class Nota {
                 do{
                 	float notaResultado = resultado.getFloat("nota");
             		int idResultado = resultado.getInt("id_nota");
-            		System.out.printf("ID: %d, nota: %.1f%n\n", idResultado, notaResultado);
+            		int idAlunoResultado = resultado.getInt("id_aluno");
+            		System.out.printf("ID: %d, nota: %.1f, id_aluno: %d\n", idResultado, notaResultado, idAlunoResultado);
             	} while (resultado.next());   
             } else {
                 System.out.println("Nota não encontrada.\n");
@@ -114,16 +117,17 @@ public class Nota {
     }
    
     
-    public static void deleteNota(Connection conexao, Scanner scanner, int id) {
+    public static void deleteNota(Connection conexao, Scanner scanner, int idNota,int idAluno) {
 	
-    	String sql = "DELETE FROM nota WHERE id_nota = ?";
+    	String sql = "DELETE FROM nota WHERE id_nota = ? AND id_aluno = ?";
 
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-        	comando.setInt(1, id);
+        	comando.setInt(1, idNota);
+        	comando.setInt(1, idAluno);
             int deletou = comando.executeUpdate();
 
             if (deletou == 1) {
-                System.out.printf("A nota de id %d foi deletada\n", id);
+                System.out.printf("A nota de id %d do aluno de id %d foi deletada\n", idNota, idAluno);
             } else {
                 System.out.println("Nota não encontrada.\n");
             }

@@ -16,7 +16,7 @@ public class Aluno {
 				novoAluno = scanner.nextLine();
 				
 				if(novoAluno.length() > 15) {
-					System.out.println("O nome deve ter no máximo 15 caracteres.\n");
+					System.out.println("O nome deve ter no máximo 15 caracteres.");
 				}
 				else if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
 					break;
@@ -55,6 +55,9 @@ public class Aluno {
 		scanner.nextLine(); // para ler o \n deixado
 		return idAluno;
 	}
+	public static boolean alunoExiste(int id) {
+		return true;
+	}
 	
 	public static void saveAluno(Connection conexao, Scanner scanner, String nome, int id) {
 		if(id == -1) { // create
@@ -90,7 +93,7 @@ public class Aluno {
 		
     }
 	
-	public static void readAluno(Connection conexao, Scanner scanner, int id) {
+	public static boolean readAluno(Connection conexao, Scanner scanner, int id) {
         String sql = "SELECT nome, id_aluno FROM aluno";
         
         if(id != -1) { sql += " WHERE id_aluno = ?"; }
@@ -108,10 +111,14 @@ public class Aluno {
             	} while (resultado.next());            	
             } else {
             	System.out.println("Aluno não encontrado.\n");
+            	return false;
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            return false;
         }
+        
+        return true;
     }
 	
 	

@@ -37,6 +37,9 @@ public class CRUD {
     				
 				if(escolhaOperacao1 == 6){ // selecionou um aluno
 					int idAluno = Aluno.recebeIdInput(scanner, " que quer selecionar: ");
+					if(!Aluno.readAluno(conexao, scanner, idAluno)){
+						continue;
+					}
   
 					int escolhaOperacao2;
 					while(true) {
@@ -87,10 +90,10 @@ public class CRUD {
     	System.out.println("\nMenu de opções do aluno:\n"
 				 + "1 - Editar aluno\n"
 				 + "2 - Listar notas\n"
-				 + "3 - Adicionar nota aluno\n"
-				 + "4 - Editar nota aluno\n"
-				 + "5 - Deletar nota aluno\n\n"
-				 + "0 - Voltar\\n");
+				 + "3 - Adicionar nota do aluno\n"
+				 + "4 - Editar nota do aluno\n"
+				 + "5 - Deletar nota do aluno\n\n"
+				 + "0 - Voltar\n");
     }
     
     private static void funcoesMenu1(Connection conexao, Scanner scanner, int operacao) {
@@ -145,7 +148,7 @@ public class CRUD {
 
 			case 5:
 				int idDN = Nota.recebeIdInput(scanner, " que quer deletar: ");
-				Nota.deleteNota(conexao, scanner, idDN);   
+				Nota.deleteNota(conexao, scanner, idDN, idAluno);   
 				break;
     	}
     }
