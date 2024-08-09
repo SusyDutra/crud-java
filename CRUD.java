@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 public class CRUD {
 	
+	private static final int INDEFINIDO = -1;
+	
     public static void main(String[] args) {
 
     	Connection conexao = null;
@@ -99,16 +101,16 @@ public class CRUD {
     private static void funcoesMenu1(Connection conexao, Scanner scanner, int operacao) {
     	switch (operacao) {
 			case 1:
-				Aluno.readAluno(conexao, scanner, -1);
+				Aluno.readAluno(conexao, scanner, INDEFINIDO);
 				break;
 				
 			case 2:
-				Nota.readNota(conexao, scanner, -1, -1);
+				Nota.readNota(conexao, scanner, INDEFINIDO, INDEFINIDO);
 				break;				
 
 			case 3:
 				String nomeCA = Aluno.recebeNomeInput(scanner, " que quer adicionar: ");
-				Aluno.saveAluno(conexao, scanner, nomeCA, -1);
+				Aluno.saveAluno(conexao, scanner, nomeCA, INDEFINIDO);
 				break;
 				
 			case 4:
@@ -132,7 +134,7 @@ public class CRUD {
 				break;	
 		
 			case 2:
-				Nota.readNota(conexao, scanner, -1, idAluno);
+				Nota.readNota(conexao, scanner, INDEFINIDO, idAluno);
 				break;				
 
 			case 3:
