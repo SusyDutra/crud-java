@@ -3,10 +3,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Nota {
-	private static final DecimalFormat df = new DecimalFormat("0.00");
+	private static final int INDEFINIDO = -1;
 	
 	public static float recebeNotaInput(Scanner scanner, String complemento) {
 		float novaNota;
@@ -17,8 +18,11 @@ public class Nota {
 			try {
 				novaNota = scanner.nextFloat();
 				
-				if(novaNota < 0 || novaNota > 10) {
-					System.out.println("Input inválido.\n");
+				if(novaNota < 0) {
+					System.out.println("A nota não pode ser negativa\n");
+				}
+				else if(novaNota > 10) {
+					System.out.println("A nota não pode ser maior que 10\n");
 				} else {
 					break;					
 				}
@@ -30,7 +34,10 @@ public class Nota {
 
 		scanner.nextLine(); // para ler o \n deixado
 		
-		return novaNota;
+		BigDecimal bd = new BigDecimal(Float.toString(novaNota));
+        bd = bd.setScale(2, RoundingMode.DOWN);
+		
+		return bd.floatValue();
 	}
 	
 	public static int recebeIdInput(Scanner scanner, String complemento) {
@@ -42,7 +49,11 @@ public class Nota {
 			try {
 				idAluno = scanner.nextInt();
 				
-				break;
+				if(idAluno <= 0) {
+					System.out.println("O id é um número maior que zero\n");
+				} else {
+					break;					
+				}
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
 				scanner.nextLine();
@@ -60,19 +71,23 @@ public class Nota {
 		else { sql = "UPDATE nota SET nota = ? WHERE id_nota = ?"; }
 
 		try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-			comando.setFloat(1, nota);
+			System.out.println(Float.toString(nota));
+			BigDecimal notaDecimal = new BigDecimal(Float.toString(nota)).setScale(2, RoundingMode.DOWN);
+			comando.setBigDecimal(1, notaDecimal);
+
 			comando.setInt(2, id);
 			
 			int acao = comando.executeUpdate();
 			if (create) {
 				if(acao == 1) {
-					System.out.println("Uma nova nota foi inserida com sucesso!\n");					
+					System.out.println("Uma nova nota foi inserida com sucesso!\n");	
+					System.out.print(nota);
 				} else {
 					System.out.println("A nota não foi criada.\n");					
 				}
 			} else {
 				if(acao == 1) {
-					System.out.printf("A nota de id %d agora vale: %.1f%n\n", id, nota);
+					System.out.printf("A nota de id %d agora vale: %.2f%n\n", id, nota);
 				} else {
 					System.out.println("Nota não encontrada.\n");
 				}
@@ -88,14 +103,14 @@ public class Nota {
     public static void readNota(Connection conexao, Scanner scanner, int idNota, int idAluno) {
         String sql = "SELECT nota, id_nota, id_aluno FROM nota";
         
-        int id = -1;
+        int id = INDEFINIDO;
 
-        if(idNota != -1) { sql += " WHERE id_nota = ?"; id = idNota; }
+        if(idNota != INDEFINIDO) { sql += " WHERE id_nota = ?"; id = idNota; }
         
-        if(idAluno != -1) { sql += " WHERE id_aluno = ?"; id = idAluno; }
+        if(idAluno != INDEFINIDO) { sql += " WHERE id_aluno = ?"; id = idAluno; }
 
         try (PreparedStatement comando = conexao.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-        	if(idNota != -1 || idAluno != -1) {
+        	if(idNota != INDEFINIDO || idAluno != INDEFINIDO) {
         		comando.setInt(1, id);        		
         	}
 
@@ -106,7 +121,7 @@ public class Nota {
                 	float notaResultado = resultado.getFloat("nota");
             		int idResultado = resultado.getInt("id_nota");
             		int idAlunoResultado = resultado.getInt("id_aluno");
-            		System.out.printf("ID: %d, nota: %.1f, id_aluno: %d\n", idResultado, notaResultado, idAlunoResultado);
+            		System.out.printf("ID: %d, nota: %.2f, id_aluno: %d\n", idResultado, notaResultado, idAlunoResultado);
             	} while (resultado.next());   
             } else {
                 System.out.println("Nota não encontrada.\n");
@@ -123,7 +138,7 @@ public class Nota {
 
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
         	comando.setInt(1, idNota);
-        	comando.setInt(1, idAluno);
+        	comando.setInt(2, idAluno);
             int deletou = comando.executeUpdate();
 
             if (deletou == 1) {

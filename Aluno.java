@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Aluno {
+	private static final int INDEFINIDO = -1;
 
 	public static String recebeNomeInput(Scanner scanner, String complemento) {
 		String novoAluno;
@@ -16,12 +17,15 @@ public class Aluno {
 				novoAluno = scanner.nextLine();
 				
 				if(novoAluno.length() > 15) {
-					System.out.println("O nome deve ter no máximo 15 caracteres.");
+					System.out.println("O nome deve ter no máximo 15 caracteres.\n");
 				}
-				else if(!novoAluno.matches(".*\\d.*") && !novoAluno.isBlank()) {
-					break;
+				else if(novoAluno.matches(".*\\d.*")) {
+					System.out.println("O nome não pode ser numérico\n");
+				}
+				else if(novoAluno.isBlank()) {
+					System.out.println("O nome não pode ser vazio\n");
 				} else {
-					System.out.println("Input inválido.\n");
+					break;
 				}
 			} catch (Exception e) {
 				System.out.println("Input inválido.\n");
@@ -55,51 +59,43 @@ public class Aluno {
 		scanner.nextLine(); // para ler o \n deixado
 		return idAluno;
 	}
-	public static boolean alunoExiste(int id) {
-		return true;
-	}
 	
 	public static void saveAluno(Connection conexao, Scanner scanner, String nome, int id) {
-		if(id == -1) { // create
-			String sql = "INSERT INTO aluno (nome) VALUES (?)";
+		String sql = "";
+
+		if(id == INDEFINIDO) { sql = "INSERT INTO aluno (nome) VALUES (?)"; }
+		else { sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?"; }
+		
+		
+		try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+			comando.setString(1, nome);
+			if(id != INDEFINIDO) { comando.setInt(2, id); }
 			
-			try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-				comando.setString(1, nome);
-				
-				int inserido = comando.executeUpdate();
-				if (inserido == 1) {
+			int acao = comando.executeUpdate();
+
+			if(id == INDEFINIDO) {
+				if (acao == 1) {
 					System.out.println("Um novo aluno foi inserido com sucesso!\n");
 				}
-			} catch (SQLException e) {
-				System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-			}			
-		} else { // update
-			String sql = "UPDATE aluno SET nome = ? WHERE id_aluno = ?";
-
-	        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-	        	comando.setString(1, nome);
-	        	comando.setInt(2, id);
-	            int atualizou = comando.executeUpdate();
-
-	            if (atualizou == 1) {
+			} else {
+				if (acao == 1) {
 	                System.out.printf("O aluno de id %d agora tem nome: %s%n\n", id, nome);
 	            } else {
 	                System.out.println("Aluno não encontrado.\n");
 	            }
-	        } catch (SQLException e) {
-	            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-	        }
-		}
-		
+			}
+		} catch (SQLException e) {
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+		}					
     }
 	
 	public static boolean readAluno(Connection conexao, Scanner scanner, int id) {
         String sql = "SELECT nome, id_aluno FROM aluno";
         
-        if(id != -1) { sql += " WHERE id_aluno = ?"; }
+        if(id != INDEFINIDO) { sql += " WHERE id_aluno = ?"; }
 
         try (PreparedStatement comando = conexao.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-        	if(id != -1) { comando.setInt(1, id); }
+        	if(id != INDEFINIDO) { comando.setInt(1, id); }
         	
             ResultSet resultado = comando.executeQuery();
             
