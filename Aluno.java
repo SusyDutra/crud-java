@@ -9,7 +9,7 @@ public class Aluno {
 
 	public static String recebeNomeInput(Scanner scanner, String complemento) {
 		String novoAluno;
-
+		String regex = "^[a-zA-Z\\s]*$";
 		while(true) {
 			System.out.println("\nDigite o nome" + complemento);
 			
@@ -24,7 +24,10 @@ public class Aluno {
 				}
 				else if(novoAluno.isBlank()) {
 					System.out.println("O nome não pode ser vazio\n");
-				} else {
+				}
+				else if(!novoAluno.matches(regex)) {
+	                System.out.println("O nome não pode conter caracteres especiais\n");
+	            } else {
 					break;
 				}
 			} catch (Exception e) {

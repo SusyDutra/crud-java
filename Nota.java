@@ -8,38 +8,43 @@ import java.math.RoundingMode;
 
 public class Nota {
 	private static final int INDEFINIDO = -1;
-	
-	public static float recebeNotaInput(Scanner scanner, String complemento) {
-		float novaNota;
-		
-		while(true) {
-			System.out.println("\nDigite a nota" + complemento + " (separe as casas decimais com uma vírgula): ");
-			
-			try {
-				novaNota = scanner.nextFloat();
-				
-				if(novaNota < 0) {
-					System.out.println("A nota não pode ser negativa\n");
-				}
-				else if(novaNota > 10) {
-					System.out.println("A nota não pode ser maior que 10\n");
-				} else {
-					break;					
-				}
-			} catch (Exception e) {
-				System.out.println("Input inválido.\n");
-				scanner.nextLine();
-			}
-		}
 
-		scanner.nextLine(); // para ler o \n deixado
-		
-		BigDecimal bd = new BigDecimal(Float.toString(novaNota));
-        bd = bd.setScale(2, RoundingMode.DOWN);
-		
-		return bd.floatValue();
+	public static float recebeNotaInput(Scanner scanner, String complemento) {
+	    String novaNota;
+	    BigDecimal bd;
+
+	    while(true) {
+	        System.out.println("\nDigite a nota" + complemento + " (separe as casas decimais com uma vírgula): ");
+
+	        try {
+	            novaNota = scanner.next();
+	            
+	            // substitui vírgula por ponto
+	            novaNota = novaNota.replace(',', '.');
+
+	            bd = new BigDecimal(novaNota);
+	            
+	            bd = bd.setScale(2, RoundingMode.DOWN);
+
+	            if(bd.floatValue() < 0) {
+	                System.out.println("A nota não pode ser negativa\n");
+	            }
+	            else if(bd.floatValue() > 10) {
+	                System.out.println("A nota não pode ser maior que 10\n");
+	            } else {
+	                break;                    
+	            }
+	        } catch (Exception e) {
+	            System.out.println("Input inválido.\n");
+	            scanner.nextLine(); // limpa o buffer
+	        }
+	    }
+
+	    //scanner.nextLine(); // para ler o \n deixado
+
+	    return bd.floatValue();
 	}
-	
+
 	public static int recebeIdInput(Scanner scanner, String complemento) {
 		int idAluno;
 		
@@ -71,17 +76,14 @@ public class Nota {
 		else { sql = "UPDATE nota SET nota = ? WHERE id_nota = ?"; }
 
 		try (PreparedStatement comando = conexao.prepareStatement(sql)) {
-			System.out.println(Float.toString(nota));
-			BigDecimal notaDecimal = new BigDecimal(Float.toString(nota)).setScale(2, RoundingMode.DOWN);
-			comando.setBigDecimal(1, notaDecimal);
+			comando.setFloat(1, nota);
 
 			comando.setInt(2, id);
 			
 			int acao = comando.executeUpdate();
 			if (create) {
 				if(acao == 1) {
-					System.out.println("Uma nova nota foi inserida com sucesso!\n");	
-					System.out.print(nota);
+					System.out.println("Uma nova nota foi inserida com sucesso!\n");
 				} else {
 					System.out.println("A nota não foi criada.\n");					
 				}
